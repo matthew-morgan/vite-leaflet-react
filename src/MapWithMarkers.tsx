@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, ScaleControl } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useSelectedPath } from './SelectedPathContext';
@@ -40,9 +40,11 @@ const MapBoxWithMarkers: React.FC<MapBoxWithMarkersProps> = ({ paths }) => {
 
     return (
         <MapContainer center={mapCenter} zoom={zoom} style={{ height: '50vh', width: '50vw' }}>
+            <ScaleControl position="bottomleft" />
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+
             />
             <CenterMap />
             {pathPoints.map((point: LatLngTuple, index) => (
