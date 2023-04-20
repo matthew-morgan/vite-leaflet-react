@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 interface LogLine {
     hours: number;
     minutes: number;
@@ -14,6 +16,46 @@ interface LogLine {
     gyroY: number;
     gyroZ: number;
 }
+
+interface TransformedLogLine {
+    id: number;
+    date: string;
+    points: [number, number][];
+    time: string;
+}
+
+function nmeaToDegrees(nmea: number): number {
+    const degrees = Math.floor(nmea / 100);
+    const minutes = nmea - (degrees * 100);
+    return degrees + minutes / 60;
+}
+
+function transformLogLines(logLines: LogLine[], id: number, date: string): TransformedLogLine {
+    const points: [number, number][] = [];
+
+    for (const logLine of logLines) {
+        const latLon: [number, number] = [
+            nmeaToDegrees(logLine.latitude),
+            nmeaToDegrees(logLine.longitude)
+        ];
+        points.push(latLon);
+    }
+
+
+    const time = logLines[0].hours.toString().padStart(2, '0') + ':' + logLines[0].minutes.toString().padStart(2, '0');
+
+    return {
+        id,
+        date,
+        points,
+        time,
+    };
+}
+
+// Example usage
+const logLines: LogLine[] = [
+    // ... your LogLine objects
+];
 
 function parseLogLine(logLineStr: string): LogLine {
     const parts = logLineStr.split(',');
@@ -40,9 +82,28 @@ function parseLogLine(logLineStr: string): LogLine {
     return logLine;
 }
 
-export { parseLogLine };
+function loadLogLinesFromFile(filePath: string): LogLine[] {
+    const logLines: LogLine[] = [];
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const lines = fileContent.split('\n');
+
+    for (const line of lines) {
+        if (line.trim() === '') {
+            continue;
+        }
+
+        const logLine = parseLogLine(line);
+        logLines.push(logLine);
+    }
+
+    return logLines;
+}
 
 // Example usage
-const exampleLogLine = "12:34:56,162345,37.421998,-122.084097,10.0,25,0.01,0.02,-0.03,1.2,2.3,-0.5";
-const parsedLogLine = parseLogLine(exampleLogLine);
-console.log(parsedLogLine);
+const logFilePath = 'log.txt';
+const logLinesArray = loadLogLinesFromFile(logFilePath);
+//console.log(logLinesArray);
+const id = 3;
+const date = '2021-01-03';
+const transformedLogLines = transformLogLines(logLines, id, date);
+console.log(transformedLogLines);

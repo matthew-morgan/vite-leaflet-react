@@ -56,10 +56,10 @@ function loadLogLinesFromFile(filePath) {
     return logLines;
 }
 // Example usage
-var logFilePath = 'log2.txt';
+var logFilePath = 'log.txt';
 var logLinesArray = loadLogLinesFromFile(logFilePath);
 //console.log(logLinesArray);
-var id = 4;
+var id = 3;
 var date = '2021-01-03';
-var transformedLogLines = transformLogLines(logLinesArray, id, date);
+var transformedLogLines = transformLogLines(logLines, id, date);
 console.log(transformedLogLines);
